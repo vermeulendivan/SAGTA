@@ -1,0 +1,9 @@
+[general]
+name=Server expression
+description=Expose Python expressions on QGIS Server
+about=Expose Python expressions on QGIS Server
+version=1.0
+qgisMinimumVersion=3.4
+author=Admire
+email=admire@kartoza.com
+server=True

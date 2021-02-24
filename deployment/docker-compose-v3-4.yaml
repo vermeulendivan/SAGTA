@@ -1,0 +1,62 @@
+version: '2'
+services:
+  lizmap:
+    image: kartoza/lizmap-web-client:3.4
+    environment:
+      LIZMAP_CACHEREDISDB: '1'
+      LIZMAP_CACHEREDISHOST: redis
+      LIZMAP_CACHESTORAGETYPE: redis
+      LIZMAP_HOME: /srv/lizmap
+      LIZMAP_USER: '1000'
+      LIZMAP_WMSSERVERURL: http://map:8080/ows/
+      LIZMAP_WPS_URL: http://wps:8080/
+      PM_CHILD_PROCESS: ondemand
+      PM_MAX_CHILDREN: '80'
+      PM_MAX_REQUESTS: '100'
+      PM_MAX_SPARE_SERVERS: '50'
+      PM_MIN_SPARE_SERVERS: '30'
+      PM_PROCESS_IDLE_TIMEOUT: '240'
+      PM_START_SERVERS: '30'
+    volumes:
+    - /home/web/lizmap_ver_3_4/lizmap/instances:/srv/projects
+    - /home/web/lizmap_ver_3_4/lizmap/var/lizmap-theme-config:/www/lizmap/var/lizmap-theme-config
+    - /home/web/lizmap_ver_3_4/lizmap/var/lizmap-config:/www/lizmap/var/config
+    - /home/web/lizmap_ver_3_4/lizmap/var/lizmap-db:/www/lizmap/var/db
+    - /home/web/lizmap_ver_3_4/lizmap/www:/www/lizmap/www
+    - /home/web/lizmap_ver_3_4/lizmap/www/var/log:/www/lizmap/var/log
+    - /home/web/lizmap_ver_3_4/lizmap/etc:/srv/etc:ro
+    command:
+    - php-fpm
+  web:
+    image: nginx:1
+    volumes:
+    - /home/web/lizmap_ver_3_4/lizmap/etc/nginx.conf:/etc/nginx/nginx.conf
+    - /home/web/lizmap_ver_3_4/lizmap/var/log/nginx:/var/log/nginx
+    - /home/web/lizmap_ver_3_4/lizmap/var/nginx-cache:/var/cache/nginx
+    - /home/web/lizmap_ver_3_4/lizmap:/srv/lizmap
+    links:
+    - lizmap:lizmap
+    ports:
+    - 8090:8080/tcp
+    user: 1000:1000
+  map:
+    image: 3liz/qgis-map-server:3.16
+    environment:
+      PGSERVICEFILE: /srv/etc/pg_service.conf
+      PGSPASSFILE: /srv/etc/pgpass.conf
+      QGIS_OPTIONS_PATH: /srv/etc/qgis
+      QGIS_SERVER_SHOW_GROUP_SEPARATOR: '1'
+      QGSRV_CACHE_ROOTDIR: /srv/projects
+      QGSRV_CACHE_SIZE: '20'
+      QGSRV_LOGGING_LEVEL: DEBUG
+      QGSRV_SERVER_PLUGINPATH: /srv/plugins
+      QGSRV_SERVER_TIMEOUT: '1000'
+      QGSRV_SERVER_WORKERS: '4'
+      QGSRV_USER: 1000:1000
+    volumes:
+    - /home/web/lizmap_ver_3_4/lizmap/instances:/srv/projects
+    - /home/web/lizmap_ver_3_4/lizmap/etc:/srv/etc:ro
+    - /home/web/lizmap_ver_3_4/lizmap/wps-data:/srv/data
+    - /home/web/lizmap_ver_3_4/lizmap/plugins:/srv/plugins
+  redis:
+    image: redis:5-alpine

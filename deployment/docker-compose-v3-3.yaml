@@ -1,0 +1,148 @@
+version: '2'
+volumes:
+  dbdata: {}
+  djangoassets: {}
+  qgisproject: {}
+  dbbackups: {}
+services:
+  lizmap:
+    image: 3liz/lizmap-web-client:3.4
+    environment:
+      LIZMAP_CACHEREDISDB: '1'
+      LIZMAP_CACHEREDISHOST: redis
+      LIZMAP_CACHESTORAGETYPE: redis
+      LIZMAP_HOME: /srv/lizmap
+      LIZMAP_USER: '1000'
+      LIZMAP_WMSSERVERURL: http://map:8080/ows/
+      PM_MAX_CHILDREN: '80'
+      PM_START_SERVERS: '30'
+      PM_MIN_SPARE_SERVERS: '30'
+      PM_MAX_SPARE_SERVERS: '50'
+      LIZMAP_WPS_URL: http://wps:8080/
+      PM_CHILD_PROCESS: '''ondemand'''
+    stdin_open: true
+    volumes:
+    - /home/web/sagta_lizmap/lizmap/instances:/srv/projects
+    - /home/web/sagta_lizmap/lizmap/var/lizmap-theme-config:/www/lizmap/var/lizmap-theme-config
+    - /home/web/sagta_lizmap/lizmap/var/lizmap-config:/www/lizmap/var/config
+    - /home/web/sagta_lizmap/lizmap/var/lizmap-db:/www/lizmap/var/db
+    - /home/web/sagta_lizmap/lizmap/www:/www/lizmap/www
+    - /home/web/sagta_lizmap/lizmap/www/var/log:/www/lizmap/var/log
+    - /home/web/sagta_lizmap/lizmap/etc:/srv/etc:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: 200m
+        max-file: '10'
+    command:
+    - php-fpm
+  web:
+    image: nginx:1
+    stdin_open: true
+    volumes:
+    - sagta_map_nginx:/etc/nginx
+    - sagta_map_nginx_logs:/var/log/nginx
+    - /home/web/sagta_lizmap/lizmap:/srv/lizmap
+    tty: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 200m
+        max-file: '10'
+    links:
+    - lizmap:lizmap
+    labels:
+      io.rancher.container.pull_image: always
+      cron.schedule: 0 0 0 * * ?
+      cron.action: restart
+  sagta-lb:
+    image: rancher/lb-service-haproxy:v0.9.3
+    ports:
+    - 80:80/tcp
+    - 443:443/tcp
+    labels:
+      io.rancher.container.agent.role: environmentAdmin,agent
+      io.rancher.container.agent_service.drain_provider: 'true'
+      io.rancher.container.create_agent: 'true'
+  wps:
+    image: 3liz/qgis-wps:3.12
+    environment:
+      PGSERVICEFILE: /srv/etc/pg_service.conf
+      PGSPASSFILE: /srv/etc/pgpass.conf
+      QGSWPS_CACHE_ROOTDIR: /srv/projects
+      QGSWPS_OUTPUTPATH: /srv/data
+      QGSWPS_PROCESSING_PROVIDERS_MODULE_PATH: /srv/processing
+      QGSWPS_REDIS_HOST: redis
+      QGSWPS_SERVER_PARALLELPROCESSES: '1'
+      QGSWPS_SERVER_PROCESSLIFECYCLE: '10'
+      QGSWPS_SERVER_RESPONSE_EXPIRATION: '86400'
+      QGSWPS_SERVER_RESPONSE_TIMEOUT: '1800'
+      QGSWPS_SERVER_WMS_SERVICE_URL: http://map:8080/ows/
+      QGSWPS_SERVER_WORKDIR: /srv/data
+      QGSWPS_USER: 1000:1000
+    stdin_open: true
+    volumes:
+    - /home/web/sagta_lizmap/lizmap/processing:/srv/processing/:ro
+    - /home/web/sagta_lizmap/lizmap/instances:/srv/projects
+    - /home/web/sagta_lizmap/lizmap/etc:/srv/etc:ro
+    - /home/web/sagta_lizmap/lizmap/wps-data:/srv/data
+    tty: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 200m
+        max-file: '10'
+    ports:
+    - 8092:8080/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  map:
+    image: 3liz/qgis-map-server:3.14
+    environment:
+      PGSERVICEFILE: /srv/etc/pg_service.conf
+      QGSRV_CACHE_ROOTDIR: /srv/projects
+      QGSRV_CACHE_SIZE: '5'
+      QGSRV_LOGGING_LEVEL: DEBUG
+      QGSRV_USER: 1000:1000
+      QGSRV_SERVER_TIMEOUT: '1000'
+      QGSRV_SERVER_PLUGINPATH: /srv/plugins
+      PGSPASSFILE: /srv/etc/pgpass.conf
+      QGIS_OPTIONS_PATH: /srv/etc/qgis
+      QGSRV_PROJECTS_SCHEMES_WPS_RESULTS: /srv/data/
+      QGSRV_SERVER_WORKERS: '4'
+    volumes:
+    - /home/web/sagta_lizmap/lizmap/instances:/srv/projects
+    - /home/web/sagta_lizmap/lizmap/etc:/srv/etc:ro
+    - /home/web/sagta_lizmap/lizmap/wps-data:/srv/data
+    - /home/web/sagta_lizmap/lizmap/plugins:/srv/plugins
+    logging:
+      driver: json-file
+      options:
+        max-file: '10'
+        max-size: 200m
+    labels:
+      io.rancher.container.pull_image: always
+      cron.schedule: 0 0 0 * * ?
+      cron.action: restart
+  redis:
+    image: redis:5
+    stdin_open: true
+    tty: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 200m
+        max-file: '10'
+    labels:
+      io.rancher.container.pull_image: always
+  btsync:
+    image: kartoza/btsync
+    environment:
+      DEVICE: sagta-topo
+      SECRET: AZ6TWZLZO3YJTIB4QEVQ7Y4UKNE25G2TC
+    stdin_open: true
+    volumes:
+    - sagta_instances:/web:rw
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always

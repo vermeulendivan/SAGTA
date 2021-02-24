@@ -1,0 +1,9 @@
+[general]
+name=Map expression
+description=Expose Python map grid expressions on QGIS Server
+about=Expose Python map grid expressions on QGIS Server
+version=1.0
+qgisMinimumVersion=3.4
+author=Admire
+email=admire@kartoza.com
+server=True

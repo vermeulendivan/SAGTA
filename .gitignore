@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+*__pycache__*
+projects/map_downloader/*.qgs~
+projects/map_downloader/*.qgs.bak~

@@ -1,0 +1,10 @@
+[general]
+name=MapPrint
+qgisMinimumVersion=3.0
+qgisMaximumVersion=3.99
+description=Fetch extent param from GetPrint WMS request, and store as an enviroment variable.
+version=1.1
+author=Samweli Mwakisambwe
+email=samweli@kartoza.com
+; if True it's a server plugin
+server=True
