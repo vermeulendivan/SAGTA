@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/custom_grid_label.iml" filepath="$PROJECT_DIR$/.idea/custom_grid_label.iml" />
+      <module fileurl="file://$USER_HOME$/dev/sagta-map-downloader/lizmap-docker-compose/.idea/lizmap-docker-compose.iml" filepath="$USER_HOME$/dev/sagta-map-downloader/lizmap-docker-compose/.idea/lizmap-docker-compose.iml" />
+    </modules>
+  </component>
+</project>

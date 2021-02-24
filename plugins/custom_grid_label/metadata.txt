@@ -1,0 +1,20 @@
+[general]
+name = Custom grid labelling
+qgisMinimumVersion = 3.10
+icon = 
+experimental = True
+deprecated = False
+homepage = 
+tracker = 
+repository = 
+tags = grid, label
+category = plugins
+hasProcessingProvider = no
+server = yes
+author = Ricardo Garcia Silva
+email = ricardo@kartoza.com
+description = A QGIS3 plugin for setting custom grid labels
+version = 0.0.1
+about = 
+changelog = 0.0.1 
+
