@@ -1,9 +1,0 @@
-[general]
-name=Label expression
-description=Map labels using Python expressions on QGIS Server
-about=Python label expressions on QGIS Server
-version=1.0
-qgisMinimumVersion=3.4
-author=Admire
-email=admire@kartoza.com
-server=True
