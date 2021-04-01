@@ -18,8 +18,6 @@ class MapPrintFilter(QgsServerFilter):
         request = self.serverInterface().requestHandler()
 
         params = request.parameterMap()
-        if params.get('REQUEST') != None and params.get('REQUEST').upper() == 'GETPRINT':
-            QgsMessageLog.logMessage("INSIDE Print Filter, setting map extent", 'Map Print Filter', Qgis.Info)
-            #QgsMessageLog.logMessage(str(params), 'Map Print Filter', Qgis.Info)
+        if params.get('REQUEST') != None and params.get('REQUEST').upper() == 'GETPRINT':          
             environ['TRANSFORMED_EXTENT'] = params.get('MAP0:TRANSFORMED_EXTENT')
             QgsMessageLog.logMessage("Map transformed extent", environ['TRANSFORMED_EXTENT'], Qgis.Info)
