@@ -22,7 +22,7 @@ services:
       - ${LIZMAP_DIR}/var/lizmap-modules:/www/lizmap/lizmap-modules
       - ${LIZMAP_DIR}/var/lizmap-my-packages:/www/lizmap/my-packages
       - ${LIZMAP_DIR}/etc:/srv/etc:ro
-      - ./map.js:/www/lizmap/www.dist/assets/js/map.js
+      #- ./map.js:/www/lizmap/www.dist/assets/js/map.js
     command:
       - php-fpm
     restart: unless-stopped
