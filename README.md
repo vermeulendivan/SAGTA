@@ -26,7 +26,7 @@ To get a running version of the repo use the following instructions
 current one.
 
   ```bash
-  wget https://raw.githubusercontent.com/kartoza/SAGTA/main/deployment/docker-compose.yaml
+  wget https://raw.githubusercontent.com/kartoza/SAGTA/main/deployment/docker-compose.yml
   ```
 * Download the `env.example` from the SAGTA repo and make sure to adjust the
 env variable to match the path for the folders in the current directory
@@ -45,6 +45,6 @@ you have cloned previously into the folder `lizmap/plugins/`
 * Copy the QGIS projects from the [SAGTA QGIS projects](https://github.com/kartoza/SAGTA/tree/main/projects/map_downloader) 
 you have previously cloned to `lizmap/instances/`
 * Get the services up by running `docker-compose up -d`
-* The default login credentials are `a`
+* The default login credentials is `admin:admin`
 
 
