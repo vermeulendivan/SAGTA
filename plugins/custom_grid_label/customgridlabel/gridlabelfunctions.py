@@ -42,6 +42,8 @@ def get_grid_label(
         reversed,
         map_scale,
         axis,
+        print_layout,
+        print_size,
         feature,
         parent,
         context
@@ -71,11 +73,17 @@ def get_grid_label(
     :param axis: The used by the layout (this will be x for the y-axis, y for the x-axis)
     :type axis: string
     
+    :param print_layout: Landscape or Portrait
+    :type print_layout: string
+    
+    :param print_size: A3 or A4
+    :type print_size: string
+    
     :return: Returns the label. Alphabetic chars for y-axis, numeric for x-axis
     :rtype: str/int
     """
     
-    num_intervals = get_num_intervals(axis, map_scale)  # Number of grid intervals
+    num_intervals = get_num_intervals(axis, map_scale, print_layout, print_size)  # Number of grid intervals
     current_position = current_grid_value - extent_min  # Label position
     
     for i in range(num_intervals):  # Loops through each of the grids
@@ -97,7 +105,7 @@ def get_grid_label(
     return result
 
 
-def get_num_intervals(axis, map_scale):
+def get_num_intervals(axis, map_scale, print_layout, print_size):
     """Determines the grid label for the provider grid position.
     :param axis: Axis returned by QGIS
     :type axis: str
@@ -105,33 +113,100 @@ def get_num_intervals(axis, map_scale):
     :param map_scale: Scale of the current map
     :type map_scale: float
     
+    :param print_layout: Landscape or Portrait
+    :type print_layout: string
+    
     :return: Returns the number of intervals
     :rtype: int
     """
     
     num_intervals = -1
-    if 23000 <= map_scale < 27000:  # 25k
-        if axis == 'x':
-            num_intervals = 3
-            #num_intervals = 5
-        else:
-            num_intervals = 5
-            #num_intervals = 10
-    elif 48000 <= map_scale < 52000:  # 50k
-        if axis == 'x':
-            num_intervals = 5
-        else:
-            num_intervals = 10
-    elif 98000 <= map_scale < 110000:  # 100k
-        if axis == 'x':
-            num_intervals = 5
-        else:
-            num_intervals = 10
-    elif map_scale >= 140000:  # 150k
-        if axis == 'x':
-            num_intervals = 4
-        else:
-            num_intervals = 8
+    if print_layout.lower() == 'landscape':
+        if print_size.lower() == 'a3':  # A3
+            if 23000 <= map_scale < 27000:  # 25k
+                if axis == 'x':
+                    num_intervals = 3
+                else:
+                    num_intervals = 5
+            elif 48000 <= map_scale < 52000:  # 50k
+                if axis == 'x':
+                    num_intervals = 5
+                else:
+                    num_intervals = 10
+            elif 98000 <= map_scale < 110000:  # 100k
+                if axis == 'x':
+                    num_intervals = 5
+                else:
+                    num_intervals = 10
+            elif map_scale >= 140000:  # 150k
+                if axis == 'x':
+                    num_intervals = 4
+                else:
+                    num_intervals = 8
+        else:  # A4
+            if 23000 <= map_scale < 27000:  # 25k
+                if axis == 'x':
+                    num_intervals = 2
+                else:
+                    num_intervals = 4
+            elif 48000 <= map_scale < 52000:  # 50k
+                if axis == 'x':
+                    num_intervals = 4
+                else:
+                    num_intervals = 7
+            elif 98000 <= map_scale < 110000:  # 100k
+                if axis == 'x':
+                    num_intervals = 4
+                else:
+                    num_intervals = 7
+            elif map_scale >= 140000:  # 150k
+                if axis == 'x':
+                    num_intervals = 3
+                else:
+                    num_intervals = 6
+    else:  # Portrait
+        if print_size.lower() == 'a3':  # A3
+            if 23000 <= map_scale < 27000:  # 25k
+                if axis == 'x':
+                    num_intervals = 4
+                else:
+                    num_intervals = 4
+            elif 48000 <= map_scale < 52000:  # 50k
+                if axis == 'x':
+                    num_intervals = 8
+                else:
+                    num_intervals = 7
+            elif 98000 <= map_scale < 110000:  # 100k
+                if axis == 'x':
+                    num_intervals = 8
+                else:
+                    num_intervals = 7
+            elif map_scale >= 140000:  # 150k
+                if axis == 'x':
+                    num_intervals = 6
+                else:
+                    num_intervals = 5
+        else:  # A4
+            if 23000 <= map_scale < 27000:  # 25k
+                if axis == 'x':
+                    num_intervals = 3
+                else:
+                    num_intervals = 3
+            elif 48000 <= map_scale < 52000:  # 50k
+                if axis == 'x':
+                    num_intervals = 5
+                else:
+                    num_intervals = 5
+            elif 98000 <= map_scale < 110000:  # 100k
+                if axis == 'x':
+                    num_intervals = 5
+                else:
+                    num_intervals = 5
+            elif map_scale >= 140000:  # 150k
+                if axis == 'x':
+                    num_intervals = 4
+                else:
+                    num_intervals = 4
     
     return num_intervals
 
